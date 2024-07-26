@@ -1,26 +1,42 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { FC, useEffect } from 'react';
 import './App.css';
+import { observer } from 'mobx-react-lite';
+import { AppStore } from './apps.store';
 
-function App() {
+export const App: FC = observer(() => {
+  useEffect(() => {
+    // AppStore.getMovieData();
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <div>
+        <input
+          placeholder="Such hier nach einem Film oder einer Serie"
+          type="text"
+          value={AppStore.movieName}
+          onChange={(e) => (AppStore.movieName = e.target.value)}
+          onKeyPress={(e) => {
+            if (e.key === 'Enter') {
+              AppStore.getMovieData(AppStore.movieName);
+            }
+          }}
+        />
+        <button></button>
+      </div>
+      <div>
+        {AppStore.movieData.length > 0 ? (
+          AppStore.movieData.map((movieData) => (
+            <div key={movieData.show.id}>
+              <p>{movieData.show.name}</p>
+              <p>{movieData.show.genres}</p>
+              <img src={movieData.show.image.medium} alt="Movie Poster" />
+            </div>
+          ))
+        ) : (
+          <p>Keine Daten verfügbar</p>
+        )}
+      </div>
     </div>
   );
-}
-
-export default App;
+});
